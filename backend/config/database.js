@@ -1,12 +1,12 @@
 const { Sequelize } = require('sequelize');
 
 const sequelize = new Sequelize(
-  'taskmanager',
-  'postgres',
-  'Manideep@1204',
+  process.env.DB_NAME || 'taskmanager',
+  process.env.DB_USER || 'postgres',
+  process.env.DB_PASSWORD || '',
   {
-    host: '127.0.0.1',
-    port: 5434,
+    host: process.env.DB_HOST || '127.0.0.1',
+    port: process.env.DB_PORT || 5432,
     dialect: 'postgres',
     logging: process.env.NODE_ENV === 'development' ? console.log : false,
     pool: {

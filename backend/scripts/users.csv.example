@@ -1,0 +1,12 @@
+name,email,employeeId,role
+Admin User,admin@yourcompany.com,ADMIN001,admin
+John Doe,john@yourcompany.com,EMP001,employee
+Jane Smith,jane@yourcompany.com,EMP002,employee
+Michael Johnson,michael@yourcompany.com,EMP003,employee
+Sarah Williams,sarah@yourcompany.com,EMP004,employee
+David Brown,david@yourcompany.com,EMP005,employee
+Emily Davis,emily@yourcompany.com,EMP006,employee
+Robert Miller,robert@yourcompany.com,EMP007,employee
+Lisa Anderson,lisa@yourcompany.com,EMP008,employee
+James Wilson,james@yourcompany.com,EMP009,employee
+Jennifer Martinez,jennifer@yourcompany.com,EMP010,employee

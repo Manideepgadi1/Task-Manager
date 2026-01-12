@@ -13,6 +13,7 @@ const EmployeeTasks = () => {
   const [loading, setLoading] = useState(true);
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
+  // Note: Employees cannot create tasks, only view and update assigned tasks
   
   const [filters, setFilters] = useState({
     search: '',

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../utils/api';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function AdminSettings() {
   const { user } = useAuth();

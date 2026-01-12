@@ -219,7 +219,7 @@ const emailTemplates = {
       <body>
         <div class="container">
           <div class="header">
-            <h1>� You've got a new task!</h1>
+            <h1>🎯 You've got a new task!</h1>
           </div>
           <div class="content">
             <p class="greeting">Hi <strong>${employeeName}</strong>,</p>
@@ -259,7 +259,7 @@ const emailTemplates = {
             </div>
             
             <div class="button-container">
-              <a href="http://localhost:5173" class="cta-button">Let's Do This 💪</a>
+              <a href="http://82.25.105.18/taskmanager/" class="cta-button" style="background-color: #4F46E5; color: #ffffff !important; text-decoration: none;">Click Here to View Task 👉</a>
             </div>
             
             <p style="font-size: 13px; color: #6b7280; margin-top: 32px; font-style: italic;">

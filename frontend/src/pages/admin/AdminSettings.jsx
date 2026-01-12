@@ -37,6 +37,11 @@ export default function AdminSettings() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
   const [activeTab, setActiveTab] = useState('general');
+  const [showPasswords, setShowPasswords] = useState({
+    current: false,
+    new: false,
+    confirm: false
+  });
 
   useEffect(() => {
     if (user) {
@@ -94,12 +99,16 @@ export default function AdminSettings() {
         email: adminProfile.email
       };
 
-      if (adminProfile.newPassword) {
-        updateData.currentPassword = adminProfile.currentPassword;
-        updateData.newPassword = adminProfile.newPassword;
-      }
-
+      // Update profile first
       await api.put(`/users/${user.id}`, updateData);
+      
+      // If password change requested, call separate endpoint
+      if (adminProfile.newPassword) {
+        await api.post('/auth/change-password', {
+          currentPassword: adminProfile.currentPassword,
+          newPassword: adminProfile.newPassword
+        });
+      }
       
       setMessage({ type: 'success', text: 'Profile updated successfully!' });
       setAdminProfile({
@@ -519,39 +528,66 @@ export default function AdminSettings() {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Current Password
               </label>
-              <input
-                type="password"
-                value={adminProfile.currentPassword}
-                onChange={(e) => setAdminProfile({ ...adminProfile, currentPassword: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Leave blank to keep current password"
-              />
+              <div className="relative">
+                <input
+                  type={showPasswords.current ? "text" : "password"}
+                  value={adminProfile.currentPassword}
+                  onChange={(e) => setAdminProfile({ ...adminProfile, currentPassword: e.target.value })}
+                  className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Leave blank to keep current password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPasswords({ ...showPasswords, current: !showPasswords.current })}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showPasswords.current ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 New Password
               </label>
-              <input
-                type="password"
-                value={adminProfile.newPassword}
-                onChange={(e) => setAdminProfile({ ...adminProfile, newPassword: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Leave blank to keep current password"
-              />
+              <div className="relative">
+                <input
+                  type={showPasswords.new ? "text" : "password"}
+                  value={adminProfile.newPassword}
+                  onChange={(e) => setAdminProfile({ ...adminProfile, newPassword: e.target.value })}
+                  className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Leave blank to keep current password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showPasswords.new ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Confirm New Password
               </label>
-              <input
-                type="password"
-                value={adminProfile.confirmPassword}
-                onChange={(e) => setAdminProfile({ ...adminProfile, confirmPassword: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Confirm new password"
-              />
+              <div className="relative">
+                <input
+                  type={showPasswords.confirm ? "text" : "password"}
+                  value={adminProfile.confirmPassword}
+                  onChange={(e) => setAdminProfile({ ...adminProfile, confirmPassword: e.target.value })}
+                  className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Confirm new password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showPasswords.confirm ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </div>
 
             <button

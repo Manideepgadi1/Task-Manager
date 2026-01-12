@@ -12,7 +12,8 @@ const TaskModal = ({ task, isOpen, onClose, onUpdate, employees = [], isAdmin = 
     assignedTo: task?.assignedTo?.id || '',
     priority: task?.priority || 'medium',
     dueDate: task?.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '',
-    status: task?.status || 'pending'
+    status: task?.status || 'pending',
+    recurrence: task?.recurrence || 'once'
   });
   const [loading, setLoading] = useState(false);
 
@@ -190,6 +191,26 @@ const TaskModal = ({ task, isOpen, onClose, onUpdate, employees = [], isAdmin = 
                 </select>
               </div>
 
+              {/* Recurrence */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Recurrence *
+                </label>
+                <select
+                  value={formData.recurrence}
+                  onChange={(e) => setFormData({ ...formData, recurrence: e.target.value })}
+                  className="input"
+                  disabled={!isAdmin && task?._id}
+                >
+                  <option value="once">One Time</option>
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
               {/* Due Date */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -204,22 +225,22 @@ const TaskModal = ({ task, isOpen, onClose, onUpdate, employees = [], isAdmin = 
                   disabled={!isAdmin && task?._id}
                 />
               </div>
-            </div>
 
-            {/* Status */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Status *
-              </label>
-              <select
-                value={formData.status}
-                onChange={(e) => handleStatusChange(e.target.value)}
-                className="input"
-              >
-                <option value="Pending">Pending</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Completed">Completed</option>
-              </select>
+              {/* Status */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Status *
+                </label>
+                <select
+                  value={formData.status}
+                  onChange={(e) => handleStatusChange(e.target.value)}
+                  className="input"
+                >
+                  <option value="Pending">Pending</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                </select>
+              </div>
             </div>
 
             {/* Actions */}

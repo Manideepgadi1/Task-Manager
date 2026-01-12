@@ -41,9 +41,9 @@ const TaskModal = ({ task, isOpen, onClose, onUpdate, employees = [], isAdmin = 
     setLoading(true);
 
     try {
-      if (task?._id) {
+      if (task?.id || task?._id) {
         // Update existing task
-        const { data } = await api.put(`/tasks/${task._id}`, formData);
+        const { data } = await api.put(`/tasks/${task.id || task._id}`, formData);
         showSuccessAnimation();
         toast.success('✨ Task updated! Looking good', {
           duration: 3000,
@@ -81,7 +81,7 @@ const TaskModal = ({ task, isOpen, onClose, onUpdate, employees = [], isAdmin = 
 
     setLoading(true);
     try {
-      await api.delete(`/tasks/${task._id}`);
+      await api.delete(`/tasks/${task.id || task._id}`);
       toast.success('Task deleted successfully');
       onUpdate(null, true);
       onClose();
@@ -106,7 +106,7 @@ const TaskModal = ({ task, isOpen, onClose, onUpdate, employees = [], isAdmin = 
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <h2 className="text-2xl font-bold text-gray-900">
-              {task?._id ? 'Edit Task' : 'Create New Task'}
+              {task?.id || task?._id ? 'Edit Task' : 'Create New Task'}
             </h2>
             <button
               onClick={onClose}
@@ -224,7 +224,7 @@ const TaskModal = ({ task, isOpen, onClose, onUpdate, employees = [], isAdmin = 
 
             {/* Actions */}
             <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-              {task?._id && isAdmin && (
+              {(task?.id || task?._id) && isAdmin && (
                 <button
                   type="button"
                   onClick={handleDelete}

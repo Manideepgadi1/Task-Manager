@@ -41,7 +41,7 @@ const EmployeeOverview = () => {
   };
 
   const handleTaskUpdate = (updatedTask) => {
-    setTasks(tasks.map(t => t._id === updatedTask._id ? updatedTask : t));
+    setTasks(tasks.map(t => (t.id || t._id) === (updatedTask.id || updatedTask._id) ? updatedTask : t));
     fetchData(); // Refresh stats
   };
 
@@ -122,7 +122,7 @@ const EmployeeOverview = () => {
             <div className="space-y-3">
               {pendingTasks.slice(0, 3).map((task) => (
                 <TaskCard
-                  key={task._id}
+                  key={task.id || task._id}
                   task={task}
                   onClick={() => {
                     setSelectedTask(task);
@@ -161,7 +161,7 @@ const EmployeeOverview = () => {
             <div className="space-y-3">
               {inProgressTasks.slice(0, 3).map((task) => (
                 <TaskCard
-                  key={task._id}
+                  key={task.id || task._id}
                   task={task}
                   onClick={() => {
                     setSelectedTask(task);

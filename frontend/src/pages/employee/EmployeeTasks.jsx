@@ -65,7 +65,7 @@ const EmployeeTasks = () => {
   };
 
   const handleTaskUpdate = (updatedTask) => {
-    setTasks(tasks.map(t => t._id === updatedTask._id ? updatedTask : t));
+    setTasks(tasks.map(t => (t.id || t._id) === (updatedTask.id || updatedTask._id) ? updatedTask : t));
   };
 
   const clearFilters = () => {
@@ -238,7 +238,7 @@ const EmployeeTasks = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
           {filteredTasks.map((task) => (
             <TaskCard
-              key={task._id}
+              key={task.id || task._id}
               task={task}
               onClick={() => {
                 setSelectedTask(task);

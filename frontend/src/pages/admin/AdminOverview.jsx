@@ -194,7 +194,7 @@ const AdminOverview = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {recentTasks.map((task) => (
               <TaskCard
-                key={task._id}
+                key={task.id || task._id}
                 task={task}
                 onClick={() => {
                   setSelectedTask(task);

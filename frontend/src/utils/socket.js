@@ -4,7 +4,9 @@ let socket = null;
 
 export const initializeSocket = () => {
   if (!socket) {
-    socket = io('http://localhost:5000', {
+    const socketUrl = window.location.origin;
+    socket = io(socketUrl, {
+      path: '/taskmanager/socket.io',
       transports: ['websocket'],
       autoConnect: false
     });

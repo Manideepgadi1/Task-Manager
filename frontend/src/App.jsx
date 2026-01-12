@@ -12,7 +12,7 @@ function App() {
   return (
     <AuthProvider>
       <SocketProvider>
-        <Router>
+        <Router basename="/taskmanager">
           <div className="min-h-screen bg-gray-50">
             <Routes>
               <Route path="/login" element={<Login />} />

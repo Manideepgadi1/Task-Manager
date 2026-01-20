@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Mail, BadgeCheck, Search, Plus, X } from 'lucide-react';
+import { Users, Mail, BadgeCheck, Search, Plus, X, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../utils/api';
 import { createConfetti } from '../../utils/confetti';
@@ -17,7 +17,8 @@ const AdminEmployees = () => {
     password: '',
     employeeId: '',
     department: '',
-    location: ''
+    location: '',
+    role: 'employee'
   });
   const [buttonHovered, setButtonHovered] = useState(false);
   useEffect(() => {
@@ -42,7 +43,7 @@ const AdminEmployees = () => {
     try {
       setLoading(true);
       const { data } = await api.get('/users');
-      setEmployees(data.filter(u => u.role === 'employee'));
+      setEmployees(data.filter(u => u.role === 'employee' || u.role === 'admin'));
     } catch (error) {
       toast.error('Failed to load employees');
     } finally {
@@ -55,10 +56,13 @@ const AdminEmployees = () => {
     try {
       await api.post('/users', {
         ...formData,
-        role: 'employee'
+        role: formData.role
       });
       createConfetti();
-      toast.success('🎉 Employee added! Welcome to the team ✨', {
+      const successMessage = formData.role === 'admin' 
+        ? '🎉 Admin added! Welcome to the team ✨'
+        : '🎉 Employee added! Welcome to the team ✨';
+      toast.success(successMessage, {
         duration: 3000,
         style: {
           borderRadius: '10px',
@@ -67,10 +71,35 @@ const AdminEmployees = () => {
         },
       });
       setShowModal(false);
-      setFormData({ name: '', email: '', password: '', employeeId: '', department: '', location: '' });
+      setFormData({ name: '', email: '', password: '', employeeId: '', department: '', location: '', role: 'employee' });
       fetchEmployees();
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to add employee');
+    }
+  };
+
+  const handleDeleteEmployee = async (employeeId, employeeName) => {
+    // Confirm deletion
+    const confirmed = window.confirm(
+      `Are you sure you want to delete ${employeeName}?\n\nThis action cannot be undone.`
+    );
+    
+    if (!confirmed) return;
+
+    try {
+      await api.delete(`/users/${employeeId}`);
+      toast.success(`${employeeName} has been removed from the team`, {
+        icon: '🗑️',
+        duration: 3000,
+        style: {
+          borderRadius: '10px',
+          background: '#000',
+          color: '#fff',
+        },
+      });
+      fetchEmployees();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to delete employee');
     }
   };
 
@@ -87,8 +116,8 @@ const AdminEmployees = () => {
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Employees</h1>
-          <p className="text-gray-600">View and manage your team members</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Team Members</h1>
+          <p className="text-gray-600">View and manage employees and admins</p>
         </div>
         <button
           onClick={() => setShowModal(true)}
@@ -97,7 +126,7 @@ const AdminEmployees = () => {
           className="btn btn-primary flex items-center gap-2"
         >
           <Plus className="w-5 h-5" />
-          {buttonHovered ? 'Add ✨' : 'Add Employee'}
+          {buttonHovered ? 'Add ✨' : 'Add User'}
         </button>
       </div>
 
@@ -184,7 +213,7 @@ const AdminEmployees = () => {
               className="btn btn-primary mx-auto inline-flex items-center gap-2"
             >
               <Plus className="w-5 h-5" />
-              <span>Add Your First Employee</span>
+              <span>Add Your First User</span>
             </motion.button>
           )}
         </motion.div>
@@ -221,13 +250,30 @@ const AdminEmployees = () => {
                     </div>
                   </div>
                   
-                  {/* Status */}
-                  <div className="mt-3">
+                  {/* Status and Role */}
+                  <div className="mt-3 flex gap-2">
                     <span className={`badge ${employee.isActive ? 'badge-completed' : 'badge-pending'}`}>
                       {employee.isActive ? 'Active' : 'Inactive'}
                     </span>
+                    {employee.role === 'admin' && (
+                      <span className="badge bg-purple-100 text-purple-800">
+                        🔑 Admin
+                      </span>
+                    )}
                   </div>
                 </div>
+
+                {/* Delete Button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteEmployee(employee.id, employee.name);
+                  }}
+                  className="p-2 hover:bg-red-50 rounded-lg transition-colors group"
+                  title="Delete employee"
+                >
+                  <Trash2 className="w-5 h-5 text-gray-400 group-hover:text-red-600 transition-colors" />
+                </button>
               </div>
             </motion.div>
           ))}
@@ -243,7 +289,7 @@ const AdminEmployees = () => {
             className="bg-white rounded-2xl shadow-large w-full max-w-md"
           >
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-2xl font-bold text-gray-900">Add New Employee</h2>
+              <h2 className="text-2xl font-bold text-gray-900">Add New User</h2>
               <button
                 onClick={() => setShowModal(false)}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -253,6 +299,24 @@ const AdminEmployees = () => {
             </div>
 
             <form onSubmit={handleAddEmployee} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Role *
+                </label>
+                <select
+                  value={formData.role}
+                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                  className="input"
+                  required
+                >
+                  <option value="employee">Employee</option>
+                  <option value="admin">Admin</option>
+                </select>
+                <p className="text-xs text-gray-500 mt-1">
+                  {formData.role === 'admin' ? '🔑 Admins have full system access' : '👤 Employees can view and manage their tasks'}
+                </p>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Full Name *
@@ -349,7 +413,7 @@ const AdminEmployees = () => {
                   type="submit"
                   className="btn btn-primary flex-1"
                 >
-                  Add Employee
+                  Add {formData.role === 'admin' ? 'Admin' : 'Employee'}
                 </button>
               </div>
             </form>
